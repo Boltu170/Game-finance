@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Topic 9 — Games</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Mono:wght@500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07090f;--s:#0f1420;--s2:#172035;--gold:#f5c518;--red:#e53030;--green:#22c55e;--txt:#c8d8e8;--dim:#4a5a6a;--bdr:#1e2d44;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--txt);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+header{background:linear-gradient(155deg,#0a0f1c,#141e38);padding:1.2rem 1rem .9rem;text-align:center;border-bottom:2px solid var(--gold);}
+.badge{display:inline-block;background:var(--gold);color:#000;font-family:'DM Mono',monospace;font-size:.6rem;font-weight:500;letter-spacing:.12em;padding:.18rem .65rem;border-radius:2px;margin-bottom:.4rem;}
+header h1{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,5vw,2rem);color:#fff;line-height:1.1;}
+header p{font-size:.72rem;color:var(--gold);margin-top:.2rem;}
+nav{display:flex;background:var(--s);border-bottom:1px solid var(--bdr);overflow-x:auto;}
+nav button{flex:1;min-width:60px;padding:.65rem .2rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--dim);font-family:'DM Sans',sans-serif;font-size:.68rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+nav button.on{color:var(--gold);border-bottom-color:var(--gold);background:rgba(245,197,24,.06);}
+.sec{display:none;padding:1rem;max-width:500px;margin:0 auto;}
+.sec.on{display:block;}
+.hd h2{font-family:'Playfair Display',serif;font-size:1.2rem;color:#fff;}
+.hd p{font-size:.74rem;color:var(--dim);margin-top:.2rem;line-height:1.5;}
+.bar{display:flex;align-items:center;gap:.4rem;margin:.6rem 0;flex-wrap:wrap;}
+.chip{background:var(--s2);border:1px solid var(--bdr);border-radius:20px;padding:.25rem .7rem;font-size:.74rem;font-weight:600;}
+.chip span{color:var(--gold);}
+.btn{display:inline-block;padding:.5rem 1.1rem;border-radius:6px;border:none;font-family:'DM Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;}
+.btn-g{background:var(--gold);color:#000;}
+.btn-o{background:transparent;border:1px solid var(--bdr);color:var(--txt);}
+.row{display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.75rem;}
+.cprog{height:3px;background:var(--bdr);border-radius:2px;margin:.4rem 0;}
+.cpfill{height:100%;background:var(--gold);border-radius:2px;transition:width .3s;}
+.result-panel{background:var(--s);border:1px solid var(--bdr);border-radius:10px;padding:1.5rem;text-align:center;margin-top:1rem;display:none;}
+.result-panel.on{display:block;}
+.ov-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold);margin:.3rem 0;}
+.big-n{font-family:'Playfair Display',serif;font-size:2.6rem;color:var(--gold);line-height:1;margin:.3rem 0;}
+.ov-sub{font-size:.78rem;color:var(--dim);margin:.3rem 0 .8rem;line-height:1.5;}
+.hint{background:rgba(245,197,24,.07);border:1px solid rgba(245,197,24,.15);border-radius:6px;padding:.4rem .65rem;font-size:.71rem;color:var(--dim);margin-bottom:.6rem;line-height:1.5;}
+.hint b{color:var(--gold);}
+.fb{padding:.6rem .75rem;border-radius:6px;font-size:.76rem;line-height:1.5;margin-top:.6rem;display:none;}
+.fb.on{display:block;}
+.fb.ok{background:rgba(34,197,94,.12);border-left:3px solid var(--green);color:#8ef;}
+.fb.bad{background:rgba(229,48,48,.12);border-left:3px solid var(--red);color:#f99;}
+.nxt-btn{margin-top:.6rem;display:none;}
+.nxt-btn.on{display:block;text-align:right;}
+
+/* ===== BOWLING ===== */
+.bowl-lane{background:var(–s);border:1px solid var(–bdr);border-radius:8px;padding:.6rem;margin:.6rem 0;text-align:center;}
+.lane-dots{display:flex;justify-content:center;gap:5px;margin-bottom:.4rem;}
+.ldot{width:14px;height:20px;background:#222a3a;border:1px solid var(–bdr);border-radius:30% 30% 20% 20%;display:inline-block;}
+.ldot.hit{background:var(–gold);}
+.ldot.miss{background:var(–red);opacity:.5;}
+.bowl-q{font-size:.9rem;font-weight:600;color:#e8f0f8;line-height:1.5;margin:.75rem 0 .6rem;min-height:50px;background:#0f1420;border:1px solid #1e2d44;border-radius:8px;padding:.8rem .9rem;}
+.pins-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:.4rem 0;}
+.b-pin{width:calc(50% - 6px);min-height:100px;background:#fff;border-radius:45% 45% 28% 28% / 45% 45% 28% 28%;border:2px solid #ddd;display:flex;align-items:flex-end;justify-content:center;padding:8px 6px 12px;text-align:center;font-size:.72rem;font-weight:700;color:#1a1a1a;cursor:pointer;position:relative;line-height:1.3;transition:border-color .15s;}
+.b-pin::before,.b-pin::after{content:’’;position:absolute;left:18%;right:18%;height:4px;background:#cc0000;border-radius:2px;}
+.b-pin::before{top:28%;}
+.b-pin::after{top:calc(28% + 11px);}
+@keyframes pin-knock{0%{transform:rotate(0) translateX(0);opacity:1;}60%{transform:rotate(60deg) translateX(40px);opacity:.6;}100%{transform:rotate(100deg) translateX(80px);opacity:0;}}
+@keyframes pin-shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-9px);}75%{transform:translateX(9px);}}
+.b-pin.knocked{animation:pin-knock .55s ease-in forwards;pointer-events:none;}
+.b-pin.wrong-pin{animation:pin-shake .4s ease;border-color:var(–red);}
+.b-pin.right-pin{border-color:var(–green);background:#f0fff4;}
+
+/* ===== HOT STREAK ===== */
+.hs-streak-bar{display:flex;justify-content:center;gap:6px;margin:.6rem 0 .2rem;}
+.hs-flame{font-size:1.8rem;opacity:.15;transition:opacity .25s,transform .25s;}
+.hs-flame.lit{opacity:1;animation:flame-pop .35s ease;}
+@keyframes flame-pop{0%{transform:scale(1);}45%{transform:scale(1.4);}100%{transform:scale(1);}}
+.hs-multi-wrap{text-align:center;margin:.1rem 0 .4rem;}
+.hs-multi{font-family:‘Playfair Display’,serif;font-size:2.4rem;color:var(–gold);line-height:1;transition:all .2s;}
+.hs-multi.boom{transform:scale(1.3);color:#ff8c00;}
+.hs-multi-label{font-size:.62rem;color:var(–dim);text-transform:uppercase;letter-spacing:.1em;}
+.hs-q{font-size:.9rem;font-weight:600;color:#e8f0f8;line-height:1.5;margin:.6rem 0;min-height:50px;background:#0f1420;border:1px solid #1e2d44;border-radius:8px;padding:.8rem .9rem;}
+.hs-opts{display:flex;flex-direction:column;gap:.45rem;}
+.hs-opt{background:var(–s);border:1.5px solid var(–bdr);border-radius:8px;padding:.65rem .9rem;font-family:‘DM Sans’,sans-serif;font-size:.82rem;color:var(–txt);cursor:pointer;text-align:left;line-height:1.4;transition:border-color .15s,background .15s;}
+.hs-opt:hover:not(:disabled){border-color:var(–gold);background:#172035;}
+.hs-opt.correct{background:rgba(34,197,94,.18);border-color:var(–green);color:#8ef;}
+.hs-opt.incorrect{background:rgba(229,48,48,.18);border-color:var(–red);color:#f99;}
+.hs-opt:disabled{cursor:default;}
+@keyframes streak-reset{0%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}100%{transform:translateX(0);}}
+.hs-shake{animation:streak-reset .4s ease;}
+
+/* ===== CARD SWIPE ===== */
+.arena{position:relative;height:280px;margin:.6rem 0;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:10px;}
+.zone{position:absolute;top:0;bottom:0;width:44%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;font-size:.7rem;font-weight:700;letter-spacing:.06em;opacity:0;transition:opacity .15s;pointer-events:none;}
+.zone.left{left:0;color:var(–green);}
+.zone.right{right:0;color:var(–red);}
+.zone.lit{opacity:1;}
+.zone-ico{font-size:1.8rem;}
+.cstack{position:absolute;border-radius:10px;border:1.5px solid #bbb;background:#f4f2ee;}
+.cs1{width:175px;height:245px;transform:rotate(-4deg);opacity:.4;}
+.cs2{width:175px;height:245px;transform:rotate(-8deg);opacity:.18;}
+.card{position:absolute;width:175px;height:245px;background:#fff;border-radius:10px;border:1.5px solid #ddd;box-shadow:0 6px 20px rgba(0,0,0,.35);cursor:grab;touch-action:none;user-select:none;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem .85rem;text-align:center;}
+.cnum{position:absolute;top:8px;left:10px;font-size:.68rem;font-weight:700;color:#bbb;font-family:‘DM Mono’,monospace;}
+.ctxt{font-family:‘Playfair Display’,serif;font-size:.84rem;color:#1a1a1a;line-height:1.5;}
+.cbtn-row{display:flex;gap:.5rem;margin-top:.4rem;}
+.cbtn{flex:1;padding:.5rem;border-radius:6px;border:1px solid var(–bdr);font-family:‘DM Sans’,sans-serif;font-size:.74rem;font-weight:700;cursor:pointer;text-align:center;}
+.cbtn.cred-btn{background:rgba(34,197,94,.12);color:var(–green);border-color:rgba(34,197,94,.3);}
+.cbtn.flag-btn{background:rgba(229,48,48,.12);color:var(–red);border-color:rgba(229,48,48,.3);}
+
+/* ===== CASE FILES ===== */
+.case-badge{display:inline-block;border-radius:4px;padding:.2rem .7rem;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.5rem;}
+.case-w{background:#1a1000;color:#f5c518;border:1px solid #f5c518;}
+.case-c{background:#001a0a;color:#22c55e;border:1px solid #22c55e;}
+.case-p{background:#1a000d;color:#e97bab;border:1px solid #e97bab;}
+.case-b{background:#001018;color:#60c8e8;border:1px solid #60c8e8;}
+.case-bhs{background:#180018;color:#c880e8;border:1px solid #c880e8;}
+.case-g{background:#0a0a14;color:#a0b0d0;border:1px solid #a0b0d0;}
+.cf-q{font-size:.9rem;font-weight:600;color:#e8f0f8;line-height:1.5;margin:.5rem 0 .75rem;min-height:55px;background:#0f1420;border:1px solid #1e2d44;border-radius:8px;padding:.8rem .9rem;}
+.cf-opts{display:flex;flex-direction:column;gap:.5rem;}
+.cf-opt{background:var(–s);border:1px solid var(–bdr);border-radius:6px;padding:.65rem .9rem;font-family:‘DM Sans’,sans-serif;font-size:.8rem;color:var(–txt);cursor:pointer;text-align:left;line-height:1.4;}
+.cf-opt:hover:not(:disabled){border-color:var(–gold);}
+.cf-opt.correct{background:rgba(34,197,94,.15);border-color:var(–green);color:#8ef;}
+.cf-opt.incorrect{background:rgba(229,48,48,.15);border-color:var(–red);color:#f99;}
+.cf-opt:disabled{cursor:default;}
+
+/* ===== SPEED ROUND ===== */
+.sr-timer{font-family:‘Playfair Display’,serif;font-size:2.4rem;color:var(–gold);text-align:center;line-height:1;}
+.sr-tprog{height:6px;background:var(–bdr);border-radius:3px;margin:.3rem 0 .6rem;overflow:hidden;}
+.sr-tfill{height:100%;background:var(–gold);border-radius:3px;transition:width 1s linear;}
+.sr-stmt{font-family:‘Playfair Display’,serif;font-size:.94rem;color:#e8f0f8;line-height:1.55;min-height:70px;background:#0f1420;border:1px solid #1e2d44;border-radius:8px;padding:.9rem;margin:.6rem 0;display:flex;align-items:center;justify-content:center;text-align:center;}
+.sr-btns{display:flex;gap:.6rem;}
+.sr-btn{flex:1;padding:.85rem .5rem;border-radius:8px;border:none;font-family:‘DM Sans’,sans-serif;font-size:.9rem;font-weight:700;cursor:pointer;}
+.sr-btn.true-btn{background:rgba(34,197,94,.15);color:var(–green);border:2px solid rgba(34,197,94,.35);}
+.sr-btn.false-btn{background:rgba(229,48,48,.15);color:var(–red);border:2px solid rgba(229,48,48,.35);}
+.sr-btn:disabled{opacity:.4;cursor:default;}
+
+/* ===== SCORES ===== */
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin:.8rem 0;}
+.sg2{display:grid;grid-template-columns:repeat(2,1fr);gap:.5rem;margin:.8rem 0;}
+.sc-box{background:var(–s2);border-radius:8px;padding:.8rem .5rem;text-align:center;}
+.sc-n{font-family:‘Playfair Display’,serif;font-size:1.4rem;color:var(–gold);}
+.sc-l{font-size:.62rem;color:var(–dim);margin-top:.12rem;}
+.rating-box{background:var(–s);border:1px solid var(–bdr);border-radius:10px;padding:1.4rem;text-align:center;margin-top:.75rem;}
+.r-pct{font-family:‘Playfair Display’,serif;font-size:3rem;color:var(–gold);line-height:1;}
+.r-stars{color:var(–gold);font-size:1rem;letter-spacing:.18em;margin:.25rem 0;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(–s);border:1px solid var(–bdr);border-radius:8px;padding:.45rem .9rem;font-size:.74rem;transition:transform .25s;z-index:200;text-align:center;min-width:170px;max-width:90vw;line-height:1.4;pointer-events:none;}
+.toast.on{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-left:3px solid var(–green);color:#6ee;}
+.toast.bad{border-left:3px solid var(–red);color:#e99;}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="badge">MOD010837 &mdash; TOPIC 9</div>
+  <h1>Can You Trust the Numbers?</h1>
+  <p>Five games &mdash; full content coverage &mdash; different every time</p>
+</header>
+
+<nav id="nav">
+  <button class="on" onclick="go('bowl',this)">&#127923; Bowling</button>
+  <button onclick="go('match',this)">&#128293; Hot Streak</button>
+  <button onclick="go('cards',this)">&#127183; Card Swipe</button>
+  <button onclick="go('cfiles',this)">&#128196; Case Files</button>
+  <button onclick="go('speed',this)">&#9889; Speed Round</button>
+  <button onclick="go('scores',this)">&#127942; Scores</button>
+</nav>
+
+<!-- ===== GAME 1: BOWLING ===== -->
+
+<div id="bowl" class="sec on">
+  <div class="hd"><h2>Knowledge Bowling</h2><p>10 questions from the full topic. Click the correct answer pin. Every game picks different questions.</p><p style="margin-top:.4rem;font-size:.7rem;background:#0f1420;border:1px solid #1e2d44;border-radius:6px;padding:.35rem .6rem;line-height:1.6"><span style="color:var(--gold)">&#128218; Slides covered:</span> <span style="color:var(--dim)">Credibility &amp; Relevance <b style="color:#fff">Slides 1&ndash;6</b> &bull; Red Flags &amp; SMCCT Framework <b style="color:#fff">Slides 7&ndash;9</b> &bull; Challenges &amp; Indicators <b style="color:#fff">Slides 10&ndash;11</b> &bull; Sources &amp; Compliance <b style="color:#fff">Slides 12&ndash;13</b></span></p></div>
+  <div class="hint"><b>Tap the pin</b> with the correct answer. Correct = pin flies off. Wrong = pin shakes red.</div>
+  <div id="bowl-game">
+    <div class="bowl-lane">
+      <div class="lane-dots" id="b-dots"></div>
+      <div class="bar" style="justify-content:center">
+        <div class="chip">Pin <span id="b-num">1</span>/10</div>
+        <div class="chip">Score: <span id="b-sc">0</span>/100</div>
+      </div>
+    </div>
+    <div class="bowl-q" id="b-q"></div>
+    <div class="pins-grid" id="b-pins"></div>
+    <div class="fb" id="b-fb"></div>
+  </div>
+  <div class="result-panel" id="bowl-result">
+    <div class="ov-title" id="bov-t"></div>
+    <div class="big-n" id="bov-n"></div>
+    <div class="ov-sub" id="bov-s"></div>
+    <div class="row">
+      <button class="btn btn-o" onclick="startBowling()">Bowl Again</button>
+      <button class="btn btn-g" onclick="go('match',document.querySelectorAll('#nav button')[1])">Flip Match &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME 2: HOT STREAK ===== -->
+
+<div id="match" class="sec">
+  <div class="hd"><h2>&#128293; Hot Streak</h2><p>Answer correctly to build your multiplier. One wrong answer and your streak resets. How high can you go?</p><p style="margin-top:.4rem;font-size:.7rem;background:#0f1420;border:1px solid #1e2d44;border-radius:6px;padding:.35rem .6rem;line-height:1.6"><span style="color:var(--gold)">&#128218; Slides covered:</span> <span style="color:var(--dim)">All challenges &amp; indicators <b style="color:#fff">Slides 10&ndash;11</b> &bull; Source types <b style="color:#fff">Slide 12</b> &bull; Compliance vs Usefulness <b style="color:#fff">Slide 13</b> &bull; Plus full topic mix</span></p></div>
+  <div id="hs-game">
+    <div class="hs-streak-bar" id="hs-streak-bar">
+      <div class="hs-flame" id="hs-f1">&#128293;</div>
+      <div class="hs-flame" id="hs-f2">&#128293;</div>
+      <div class="hs-flame" id="hs-f3">&#128293;</div>
+      <div class="hs-flame" id="hs-f4">&#128293;</div>
+      <div class="hs-flame" id="hs-f5">&#128293;</div>
+    </div>
+    <div class="hs-multi-wrap">
+      <div class="hs-multi" id="hs-multi">x1</div>
+      <div class="hs-multi-label">multiplier</div>
+    </div>
+    <div class="bar" style="justify-content:center;margin:.5rem 0">
+      <div class="chip">Score: <span id="hs-sc">0</span></div>
+      <div class="chip">Q: <span id="hs-qn">1</span>/15</div>
+      <div class="chip">Best streak: <span id="hs-best">0</span></div>
+    </div>
+    <div class="cprog"><div class="cpfill" id="hs-prog" style="width:0%"></div></div>
+    <div class="hs-q" id="hs-q"></div>
+    <div class="hs-opts" id="hs-opts"></div>
+    <div class="fb" id="hs-fb"></div>
+    <div class="nxt-btn" id="hs-nxt"><button class="btn btn-g" onclick="nextHS()">Next &rarr;</button></div>
+  </div>
+  <div class="result-panel" id="hs-result">
+    <div class="ov-title" id="hsov-t"></div>
+    <div class="big-n" id="hsov-n"></div>
+    <div class="ov-sub" id="hsov-s"></div>
+    <div class="row">
+      <button class="btn btn-o" onclick="startHS()">Play Again</button>
+      <button class="btn btn-g" onclick="go('cards',document.querySelectorAll('#nav button')[2])">Card Swipe &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME 3: CARD SWIPE ===== -->
+
+<div id="cards" class="sec">
+  <div class="hd"><h2>Red Flag or Credible?</h2><p>Drag left = Credible, right = Red Flag. 10 random cards from a pool of 24. Different every game!</p><p style="margin-top:.4rem;font-size:.7rem;background:#0f1420;border:1px solid #1e2d44;border-radius:6px;padding:.35rem .6rem;line-height:1.6"><span style="color:var(--gold)">&#128218; Slides covered:</span> <span style="color:var(--dim)">What is Credibility? <b style="color:#fff">Slide 5</b> &bull; Red Flags <b style="color:#fff">Slide 7</b> &bull; Credibility Indicators <b style="color:#fff">Slide 11</b> &bull; Sources &amp; Compliance <b style="color:#fff">Slides 12&ndash;13</b></span></p></div>
+  <div class="cprog"><div class="cpfill" id="cp-fill" style="width:0%"></div></div>
+  <div class="bar">
+    <div class="chip">Card <span id="cp-n">1</span>/10</div>
+    <div class="chip">Score: <span id="cp-sc">0</span></div>
+  </div>
+  <div class="arena" id="arena">
+    <div class="zone left" id="zone-l"><div class="zone-ico">&#9989;</div>CREDIBLE</div>
+    <div class="zone right" id="zone-r"><div class="zone-ico">&#128681;</div>RED FLAG</div>
+    <div class="cstack cs2"></div>
+    <div class="cstack cs1"></div>
+  </div>
+  <div class="cbtn-row" id="cbtns">
+    <button class="cbtn cred-btn" onclick="swipeCard('left')">&#9989; Credible</button>
+    <button class="cbtn flag-btn" onclick="swipeCard('right')">&#128681; Red Flag</button>
+  </div>
+  <div class="result-panel" id="cp-res">
+    <div class="ov-title" id="cp-t"></div>
+    <div class="big-n" id="cp-n2"></div>
+    <div class="ov-sub" id="cp-s"></div>
+    <div class="row">
+      <button class="btn btn-o" onclick="startCards()">Play Again</button>
+      <button class="btn btn-g" onclick="go('cfiles',document.querySelectorAll('#nav button')[3])">Case Files &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME 4: CASE FILES ===== -->
+
+<div id="cfiles" class="sec">
+  <div class="hd"><h2>Case Files</h2><p>Real scenarios and cases. 8 questions per game from a pool of 24. Different every game!</p><p style="margin-top:.4rem;font-size:.7rem;background:#0f1420;border:1px solid #1e2d44;border-radius:6px;padding:.35rem .6rem;line-height:1.6"><span style="color:var(--gold)">&#128218; Slides covered:</span> <span style="color:var(--dim)">Wirecard, Carillion, Patisserie Valerie <b style="color:#fff">Slides 4, 9</b> &bull; Boohoo, BHS, TechStartup <b style="color:#fff">Slides 9, 13, 15</b> &bull; Challenges &amp; Source Types <b style="color:#fff">Slides 10&ndash;12</b> &bull; Compliance vs Usefulness <b style="color:#fff">Slide 13</b></span></p></div>
+  <div id="cf-game">
+    <div class="cprog"><div class="cpfill" id="cf-prog" style="width:0%"></div></div>
+    <div class="bar">
+      <div id="cf-badge" class="case-badge">LOADING</div>
+      <div class="chip">Q <span id="cf-num">1</span>/8</div>
+      <div class="chip">Score: <span id="cf-sc">0</span></div>
+    </div>
+    <div class="cf-q" id="cf-q"></div>
+    <div class="cf-opts" id="cf-opts"></div>
+    <div class="fb" id="cf-fb"></div>
+    <div class="nxt-btn" id="cf-nxt"><button class="btn btn-g" onclick="nextCF()">Next &rarr;</button></div>
+  </div>
+  <div class="result-panel" id="cf-res">
+    <div class="ov-title" id="cf-rt"></div>
+    <div class="big-n" id="cf-rn"></div>
+    <div class="ov-sub" id="cf-rs"></div>
+    <div class="row">
+      <button class="btn btn-o" onclick="startCF()">Play Again</button>
+      <button class="btn btn-g" onclick="go('speed',document.querySelectorAll('#nav button')[4])">Speed Round &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== GAME 5: SPEED ROUND ===== -->
+
+<div id="speed" class="sec">
+  <div class="hd"><h2>&#9889; Speed Round</h2><p>60 seconds. True or False. 36 statements from every slide. How many can you get right?</p><p style="margin-top:.4rem;font-size:.7rem;background:#0f1420;border:1px solid #1e2d44;border-radius:6px;padding:.35rem .6rem;line-height:1.6"><span style="color:var(--gold)">&#128218; Slides covered:</span> <span style="color:var(--dim)">Everything &mdash; all 36 statements map directly to <b style="color:#fff">Slides 1&ndash;13</b>. If you get one wrong, note the topic and re-read that slide.</span></p></div>
+  <div id="sr-game">
+    <div class="sr-timer" id="sr-time">60</div>
+    <div class="sr-tprog"><div class="sr-tfill" id="sr-tfill" style="width:100%"></div></div>
+    <div class="bar" style="justify-content:center">
+      <div class="chip">Correct: <span id="sr-sc">0</span></div>
+      <div class="chip">Done: <span id="sr-done">0</span></div>
+    </div>
+    <div class="sr-stmt" id="sr-stmt">Loading...</div>
+    <div class="sr-btns">
+      <button class="sr-btn true-btn" id="sr-tbtn" onclick="answerTF(true)">TRUE</button>
+      <button class="sr-btn false-btn" id="sr-fbtn" onclick="answerTF(false)">FALSE</button>
+    </div>
+    <div class="fb" id="sr-fb"></div>
+  </div>
+  <div class="result-panel" id="sr-res">
+    <div class="ov-title" id="sr-rt"></div>
+    <div class="big-n" id="sr-rn"></div>
+    <div class="ov-sub" id="sr-rs"></div>
+    <div class="row">
+      <button class="btn btn-o" onclick="startSpeed()">Play Again</button>
+      <button class="btn btn-g" onclick="go('scores',document.querySelectorAll('#nav button')[5])">My Scores &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SCORES ===== -->
+
+<div id="scores" class="sec">
+  <div class="hd"><h2>Analyst Rating</h2></div>
+  <div class="sg">
+    <div class="sc-box"><div class="sc-n" id="sc-b">--</div><div class="sc-l">&#127923; Bowling</div></div>
+    <div class="sc-box"><div class="sc-n" id="sc-m">--</div><div class="sc-l">&#128293; Hot Streak</div></div>
+    <div class="sc-box"><div class="sc-n" id="sc-c">--</div><div class="sc-l">&#127183; Cards</div></div>
+  </div>
+  <div class="sg2">
+    <div class="sc-box"><div class="sc-n" id="sc-cf">--</div><div class="sc-l">&#128196; Case Files</div></div>
+    <div class="sc-box"><div class="sc-n" id="sc-sr">--</div><div class="sc-l">&#9889; Speed Round</div></div>
+  </div>
+  <div class="rating-box">
+    <div style="font-size:.62rem;color:var(--dim);text-transform:uppercase;letter-spacing:.1em">Overall Rating</div>
+    <div class="r-pct" id="sc-pct">--</div>
+    <div class="r-stars" id="sc-stars">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+    <div style="font-size:.8rem;color:var(--dim);margin-top:.4rem" id="sc-lbl">Complete all five games to see your rating</div>
+  </div>
+  <div style="text-align:center;margin-top:1rem">
+    <button class="btn btn-o" onclick="go('bowl',document.querySelectorAll('#nav button')[0])">Play Again</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ================================================================
+//  UTILITIES
+// ================================================================
+function shuffle(arr) {
+  var a = arr.slice(), i, j, tmp;
+  for (i = a.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+  }
+  return a;
+}
+function go(id, btn) {
+  var secs = document.querySelectorAll('.sec');
+  var navBtns = document.querySelectorAll('#nav button');
+  for (var i = 0; i < secs.length; i++) secs[i].classList.remove('on');
+  for (var i = 0; i < navBtns.length; i++) navBtns[i].classList.remove('on');
+  document.getElementById(id).classList.add('on');
+  if (btn) btn.classList.add('on');
+  refreshScores();
+}
+var GS = { bowl: null, match: null, cards: null, cfiles: null, speed: null };
+function refreshScores() {
+  document.getElementById('sc-b').textContent  = GS.bowl   !== null ? GS.bowl + '/100' : '--';
+  document.getElementById('sc-m').textContent  = GS.match  !== null ? GS.match + ' att' : '--';
+  document.getElementById('sc-c').textContent  = GS.cards  !== null ? GS.cards + '/10'  : '--';
+  document.getElementById('sc-cf').textContent = GS.cfiles !== null ? GS.cfiles + '/80' : '--';
+  document.getElementById('sc-sr').textContent = GS.speed  !== null ? GS.speed.score + '/' + GS.speed.done : '--';
+  var parts = 0, total = 0;
+  if (GS.bowl   !== null) { total += GS.bowl / 100; parts++; }
+  if (GS.match  !== null) { total += Math.max(0, 1 - ((GS.match - 8) / 16)); parts++; }
+  if (GS.cards  !== null) { total += GS.cards / 10; parts++; }
+  if (GS.cfiles !== null) { total += GS.cfiles / 80; parts++; }
+  if (GS.speed  !== null && GS.speed.done > 0) { total += GS.speed.score / GS.speed.done; parts++; }
+  if (parts === 5) {
+    var pct = Math.round(total / 5 * 100);
+    document.getElementById('sc-pct').textContent = pct + '%';
+    document.getElementById('sc-stars').innerHTML =
+      pct>=90?'&#9733;&#9733;&#9733;&#9733;&#9733;':pct>=70?'&#9733;&#9733;&#9733;&#9733;&#9734;':pct>=50?'&#9733;&#9733;&#9733;&#9734;&#9734;':pct>=30?'&#9733;&#9733;&#9734;&#9734;&#9734;':'&#9733;&#9734;&#9734;&#9734;&#9734;';
+    document.getElementById('sc-lbl').textContent =
+      pct>=90?'Outstanding -- Senior Analyst material!':pct>=70?'Strong -- you think critically about financial data':pct>=50?'Developing -- review the SMCCT framework and try again':'Keep going -- the concepts will click with practice';
+  }
+}
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast on ' + (type||'');
+  clearTimeout(t._tid); t._tid = setTimeout(function(){ t.classList.remove('on'); }, 2800);
+}
+
+// ================================================================
+//  GAME 1: BOWLING  (pool: 26 questions, 10 per game)
+// ================================================================
+var BOWL_QS = [
+  // Slides 1-9 core
+  { q:'Which firm audited Wirecard for over a decade before the fraud was exposed?',
+    opts:['KPMG','Deloitte','EY','PwC'], a:2,
+    ex:'EY audited Wirecard throughout. €1.9bn of fabricated cash was undetected.' },
+  { q:'Carillion\'s collapse in 2018 resulted in approximately how many job losses?',
+    opts:['4,300','14,000','43,000','430,000'], a:2,
+    ex:'43,000 jobs were lost overnight in January 2018.' },
+  { q:'Patisserie Valerie\'s accounting fraud involved approximately how much money?',
+    opts:['£9.4 million','£94 million','£940 million','£9.4 billion'], a:1,
+    ex:'£94 million was missing. CFO Chris Wild was arrested.' },
+  { q:'Credibility in financial data means...',
+    opts:['It meets minimum legal standards','You can reasonably rely on it','It was prepared this year','It shows strong revenue growth'], a:1,
+    ex:'Credibility = can you reasonably rely on this data? Reliable, accurate, neutral, free from material error.' },
+  { q:'The S in SMCCT stands for...',
+    opts:['Standards','Statements','Source','Scrutiny'], a:2,
+    ex:'S = Source. Who prepared this? What are their incentives? Independent audit beats management commentary.' },
+  { q:'The T in SMCCT stands for...',
+    opts:['Transparency','Trust','Timeliness','Thoroughness'], a:2,
+    ex:'T = Timeliness. How old is this data? Markets change fast. Stale data leads to bad decisions.' },
+  { q:'Which SMCCT element asks: does this data match prior years and industry benchmarks?',
+    opts:['Source','Methods','Consistency','Completeness'], a:2,
+    ex:'C = Consistency. Compare trends, industry averages and competitor performance.' },
+  { q:'Which red flag category covers: ratios don\'t match totals and figures contradict text?',
+    opts:['Missing Information','Internal Inconsistencies','Unrealistic Projections','Excessive Complexity'], a:1,
+    ex:'Internal Inconsistencies are a major warning sign. Numbers that don\'t reconcile may indicate manipulation.' },
+  { q:'TechStartup claims 400% revenue growth. Revenue went from £10,000 to £50,000. Main concern?',
+    opts:['400% growth is impossible','Percentage growth hides how tiny the absolute figure is','No auditor is named','The CEO is not qualified'], a:1,
+    ex:'£50k total revenue is very small regardless of the growth percentage. Absolute figures matter.' },
+  { q:'Which of the following is NOT one of the four red flag categories in the framework?',
+    opts:['Missing Information','Internal Inconsistencies','Unrealistic Projections','Poor Profitability'], a:3,
+    ex:'The four categories are: Missing Info, Inconsistencies, Unrealistic Projections, Excessive Complexity.' },
+  // Slide 10 - Challenges
+  { q:'Optimism Bias in financial reporting leads to...',
+    opts:['Forecasts that are systematically too pessimistic','Forecasts that are systematically too positive','More accurate budgeting','Lower share prices'], a:1,
+    ex:'Slide 10: Bonuses, share prices and financing create incentives for strategic positive framing.' },
+  { q:'Time Lag as a credibility challenge means...',
+    opts:['Reports take too long to prepare','Annual reports are backward-looking and conditions change fast','Auditors work slowly','There are not enough analysts'], a:1,
+    ex:'Slide 10: Reports reflect the past. By the time you read them, market conditions may have changed significantly.' },
+  { q:'Complexity and Opacity as a credibility challenge refers to...',
+    opts:['Reports being too short','Material risks buried in footnotes and jargon obscuring simple facts','Too many graphs and charts','Auditors using technical language'], a:1,
+    ex:'Slide 10: 100+ page reports can deliberately bury risks in footnotes to make it harder for analysts to find problems.' },
+  { q:'Information Asymmetry in financial reporting means...',
+    opts:['The report has unequal column widths','Management knows far more than external analysts, and controls what you see','Two analysts reach different conclusions','The audit is incomplete'], a:1,
+    ex:'Slide 10: Management controls disclosure. Carillion\'s board knew about £7bn debts months before the public collapse.' },
+  { q:'Which of these is one of the five challenges in assessing credibility (Slide 10)?',
+    opts:['Lack of accounting standards','Over-reliance on Audit','Too many regulatory bodies','Analyst disagreements'], a:1,
+    ex:'Slide 10 lists: Information Asymmetry, Optimism Bias, Complexity/Opacity, Over-reliance on Audit, Time Lag.' },
+  // Slide 11 - Indicators with limitations
+  { q:'"Credibility is always a matter of _____, not binary yes/no." (Slide 11)',
+    opts:['quantity','opinion','DEGREE','calculation'], a:2,
+    ex:'Slide 11: Credibility exists on a spectrum. Even the strongest indicators reduce risk -- they don\'t eliminate it.' },
+  { q:'Which indicator of credibility has the limitation: compliance does not equal quality?',
+    opts:['Transparent Methodologies','Regulatory Oversight / FCA filings','Consistency Over Time','Big Four audit firms'], a:1,
+    ex:'Slide 11: SEC/FCA filings signal compliance. But compliance does not equal credibility or quality.' },
+  { q:'Which credibility indicator has the limitation: consistency does not equal accuracy?',
+    opts:['Big Four audit firms','Regulatory Oversight','Consistency Over Time','Transparent Methodologies'], a:2,
+    ex:'Slide 11: Consistent accounting policies reduce risk but a consistently wrong method is still wrong.' },
+  // Slide 12 - Sources
+  { q:'Which is listed as a LIMITATION of audited financial statements? (Slide 12)',
+    opts:['They are too expensive','They are backward-looking and judgment-based','They are never available publicly','They are prepared by management'], a:1,
+    ex:'Slide 12: Audited statements have higher credibility BUT are backward-looking (history, not future) and judgment-based.' },
+  { q:'Management Commentary is described as timely. What are its TWO key weaknesses? (Slide 12)',
+    opts:['Too short and too expensive','Incentive-driven and strategically framed','Always optimistic and never audited','Too long and too technical'], a:1,
+    ex:'Slide 12: Timely = a pro. But incentive-driven (bonuses) and strategic framing = credibility risks.' },
+  { q:'Analyst reports have which specific credibility risk? (Slide 12)',
+    opts:['They are always too short','They are never based on real data','Conflicts of interest and assumption-dependence','They are only available to large investors'], a:2,
+    ex:'Slide 12: Analyst reports are interpretive but assumption-dependent and risk conflicts of interest.' },
+  { q:'"Always ask: WHY does this data exist?" What would this question reveal about a CEO blog post?',
+    opts:['It is legally required disclosure','Its purpose is to sell the story to investors','It is more accurate than the audit','It is part of regulatory compliance'], a:1,
+    ex:'Slide 12: CEO blog post = sell the story. Audited statements = legal requirement. Purpose shapes credibility.' },
+  // Slide 13 - Legal compliance
+  { q:'Legal compliance means a report meets minimum standards and passes audit. Analytical usefulness means...',
+    opts:['The same thing -- there is no difference','It provides a complete picture and supports real decisions','It was prepared by a credible firm','It is shorter and easier to read'], a:1,
+    ex:'Slide 13: A report can be 100% legally compliant yet still fail to provide a meaningful, decision-useful picture.' },
+  { q:'Boohoo\'s 2020 report was legally compliant and audited. Yet it failed investors. Why?',
+    opts:['Revenue figures were misstated','The audit opinion was qualified','Material supply chain risks were not transparently disclosed','It was not filed with the FCA'], a:2,
+    ex:'Slide 13 + Boohoo case: Compliance does not equal analytical usefulness. Supply chain risks were a material omission.' },
+  { q:'Which source ranks HIGHEST on the credibility ladder?',
+    opts:['CEO investor day speech','Management commentary','Independently audited financial statements','Analyst forecast report'], a:2,
+    ex:'Audited statements = top. But Wirecard and Carillion show even these are not a guarantee.' },
+  { q:'BHS\'s 2015 accounts credibly showed a £1.3bn pension deficit. For a 2016 survival investor this was...',
+    opts:['Highly credible and highly relevant','Credible but of limited relevance','Relevant but not credible','Neither credible nor relevant'], a:1,
+    ex:'Credible (audited, accurate) but limited relevance -- investors needed 2016 cash flow forecasts, not 2015 pension data.' }
+];
+
+var bList, bIdx, bScore;
+function startBowling() {
+  bList = shuffle(BOWL_QS).slice(0, 10);
+  bIdx = 0; bScore = 0;
+  document.getElementById('bowl-result').classList.remove('on');
+  document.getElementById('bowl-game').style.display = 'block';
+  renderBowlQ();
+}
+function renderBowlQ() {
+  if (bIdx >= bList.length) { showBowlResult(); return; }
+  var q = bList[bIdx], i, dots = '', pin;
+  for (i = 0; i < 10; i++) {
+    dots += '<span class="ldot' + (i < bIdx ? ' hit' : '') + '"></span>';
+  }
+  document.getElementById('b-dots').innerHTML = dots;
+  document.getElementById('b-num').textContent = bIdx + 1;
+  document.getElementById('b-sc').textContent = bScore;
+  document.getElementById('b-fb').className = 'fb';
+  document.getElementById('b-q').textContent = q.q;
+  var pg = document.getElementById('b-pins');
+  pg.innerHTML = '';
+  for (i = 0; i < 4; i++) {
+    pin = document.createElement('div');
+    pin.className = 'b-pin';
+    pin.textContent = q.opts[i];
+    (function(idx){ pin.addEventListener('click', function(){ answerBowl(idx); }); })(i);
+    pg.appendChild(pin);
+  }
+}
+function answerBowl(i) {
+  var q = bList[bIdx], pins = document.querySelectorAll('.b-pin'), j, fb;
+  for (j = 0; j < pins.length; j++) pins[j].style.pointerEvents = 'none';
+  fb = document.getElementById('b-fb');
+  if (i === q.a) {
+    pins[i].classList.add('knocked'); bScore += 10;
+    fb.textContent = 'Strike! +10 -- ' + q.ex; fb.className = 'fb on ok';
+    setTimeout(function(){ bIdx++; renderBowlQ(); }, 2000);
+  } else {
+    pins[i].classList.add('wrong-pin'); pins[q.a].classList.add('right-pin');
+    fb.textContent = 'Gutter ball. Correct: ' + q.opts[q.a] + '. ' + q.ex; fb.className = 'fb on bad';
+    setTimeout(function(){ bIdx++; renderBowlQ(); }, 2800);
+  }
+}
+function showBowlResult() {
+  GS.bowl = bScore; refreshScores();
+  document.getElementById('bowl-game').style.display = 'none';
+  document.getElementById('bowl-result').classList.add('on');
+  document.getElementById('bov-t').textContent = bScore>=80?'Perfect game!':bScore>=60?'Great effort!':bScore>=40?'Good start!':'Back to the lane!';
+  document.getElementById('bov-n').textContent = bScore + '/100';
+  document.getElementById('bov-s').textContent = bScore>=80?'You know this topic inside out.':bScore>=60?'Strong knowledge. Review the ones you missed.':'Focus on the SMCCT framework, the 5 challenges, and source types from Slides 10-12.';
+}
+
+// ================================================================
+//  GAME 2: HOT STREAK
+//  15 questions per game from pool of 28.
+//  Correct = +10 × multiplier. Streak builds multiplier (max x5).
+//  Wrong = streak resets to 0, multiplier back to x1.
+// ================================================================
+var HS_QS = [
+  // Slides 10-13 heavy, plus full topic mix
+  { q:'What is Information Asymmetry in financial reporting?',
+    opts:['Two analysts reaching different conclusions','Management controls what external investors can see','A report with missing footnotes','Auditors and management disagreeing'],
+    a:1, ex:'Slide 10: Management knows far more than you. They control what you see. Carillion hid £7bn for months.' },
+  { q:'Optimism Bias as a credibility challenge means...',
+    opts:['Analysts are too negative about companies','Bonuses and share prices push management to frame data positively','Reports take too long to prepare','Auditors overlook small errors'],
+    a:1, ex:'Slide 10: Bonuses, share prices and financing needs create incentives for strategic positive framing.' },
+  { q:'Time Lag as a credibility challenge refers to...',
+    opts:['Auditors working too slowly','Reports being backward-looking while conditions change fast','Reports taking too long to publish','Investors reading reports late'],
+    a:1, ex:'Slide 10: Annual reports reflect the past. Market conditions can change dramatically before investors read them.' },
+  { q:'Complexity and Opacity as a credibility challenge means...',
+    opts:['Reports that are too short to be useful','Material risks buried in footnotes and jargon to obscure simple facts','Auditors using too much technical language','Charts and graphs that are hard to read'],
+    a:1, ex:'Slide 10: 100+ page reports can deliberately bury risks in footnotes. Excessive complexity can be intentional.' },
+  { q:'Over-reliance on Audit is a challenge because...',
+    opts:['Audits are too expensive','Audit gives reasonable assurance -- NOT certainty or a fraud guarantee','Auditors are always wrong','Only Big Four audits are valid'],
+    a:1, ex:'Slide 10: Wirecard was audited by EY for a decade. Audit reduces risk -- it does not eliminate it.' },
+  { q:'According to Slide 11, credibility is always a matter of...',
+    opts:['Who prepared the report','DEGREE -- never binary yes or no','Whether the FCA approved it','How long the report is'],
+    a:1, ex:'Slide 11: All credibility indicators reduce risk. None of them eliminate it. Always evaluate on a spectrum.' },
+  { q:'FCA or SEC regulatory filings are a credibility indicator. What is their key LIMITATION?',
+    opts:['They are not publicly available','Compliance does not equal quality or analytical usefulness','They are always outdated','They are only required for large companies'],
+    a:1, ex:'Slide 11: Regulatory oversight signals compliance -- but Boohoo was FCA-regulated and still failed investors.' },
+  { q:'Consistent accounting policies over time are a credibility indicator. Their limitation is...',
+    opts:['Consistency is hard to verify','Consistency does not equal accuracy -- a consistent wrong method is still wrong','Only 3 years of consistency counts','Large companies change policies more often'],
+    a:1, ex:'Slide 11: Consistency reduces risk but does not guarantee the method itself is correct or meaningful.' },
+  { q:'What is the main ADVANTAGE of audited financial statements? (Slide 12)',
+    opts:['They are forward-looking','They are judgment-free','Higher credibility -- independently verified','They are always accurate'],
+    a:2, ex:'Slide 12: Audited statements = higher credibility. But they are backward-looking and judgment-based.' },
+  { q:'What is the main ADVANTAGE of Management Commentary? (Slide 12)',
+    opts:['Independently verified','Free from incentive bias','Timely -- more current than audited statements','Always more accurate than analyst reports'],
+    a:2, ex:'Slide 12: Timely is the pro. Incentive-driven and strategically framed are the cons.' },
+  { q:'Forecasts and Projections have which specific weakness? (Slide 12)',
+    opts:['They are always backward-looking','Highly uncertain and subject to optimism bias','They require a Big Four firm to prepare','They are less relevant than audited statements'],
+    a:1, ex:'Slide 12: Forecasts are relevant (pro) -- highly uncertain and optimism-biased (cons).' },
+  { q:'Analyst reports have which specific credibility risk? (Slide 12)',
+    opts:['They are too short','Conflicts of interest and assumption dependence','They are never publicly available','They are always based on old data'],
+    a:1, ex:'Slide 12: Interpretive = pro. Assumption-dependent + conflicts of interest = cons.' },
+  { q:'"WHY does this data exist?" Applied to a CEO blog post, the answer reveals...',
+    opts:['It is a legal requirement like an FCA filing','Its purpose is to sell the story -- not inform objectively','It is more reliable than analyst reports','It has been independently verified'],
+    a:1, ex:'Slide 12: Audited statements = legal requirement. CEO blog = sell the story. Purpose reveals bias.' },
+  { q:'Slide 13 says financial data can be 100% legally compliant yet still...',
+    opts:['Pass the audit automatically','Fail to provide a complete or meaningful picture','Be considered highly credible','Meet analytical usefulness standards'],
+    a:1, ex:'Slide 13: Legal compliance = minimum standards. Analytical usefulness = reflects reality, supports decisions.' },
+  { q:'Which quality belongs to "Analytical Usefulness" but NOT just "Legal Compliance"? (Slide 13)',
+    opts:['Meets minimum standards','Follows accounting rules','Passes external audit','Reflects economic reality and builds trust'],
+    a:3, ex:'Slide 13: Legally defensible = compliance. Reflects economic reality and supports decisions = usefulness.' },
+  { q:'Wirecard was audited by EY for over a decade. What does this prove?',
+    opts:['EY is an unreliable firm','Even a Big Four audit cannot guarantee credibility','German accounting standards are too weak','Investors should avoid payment companies'],
+    a:1, ex:'Credibility is a matter of degree. €1.9bn in fabricated cash went undetected for years.' },
+  { q:'Carillion\'s board knew about £7bn in debts months before investors. This is which challenge?',
+    opts:['Optimism Bias','Time Lag','Information Asymmetry','Over-reliance on Audit'],
+    a:2, ex:'Slide 10: Information Asymmetry at its worst. Management controls the narrative until collapse.' },
+  { q:'The SMCCT framework letter M stands for...',
+    opts:['Management','Materiality','Methods','Monitoring'],
+    a:2, ex:'M = Methods. How was this calculated? Are the assumptions realistic? Check for policy changes.' },
+  { q:'A company\'s report changes its revenue recognition method for the third year in a row with no explanation. Which red flag?',
+    opts:['Missing Information','Internal Inconsistencies','Unrealistic Projections','Excessive Complexity'],
+    a:1, ex:'Unexplained accounting changes = Internal Inconsistencies. May indicate profit manipulation.' },
+  { q:'BHS 2015 accounts credibly showed a £1.3bn pension deficit. For a 2016 survival investor this was...',
+    opts:['Highly relevant and credible','Credible but of limited relevance','Relevant but not credible','Neither credible nor relevant'],
+    a:1, ex:'Credible (audited, accurate) but limited relevance -- investors needed 2016 cash flow survival data.' },
+  { q:'Boohoo\'s 2020 report failed investors despite being legally compliant. This is Slide 13 because...',
+    opts:['Revenue was overstated','Legal compliance did not equal analytical usefulness -- material risks omitted','The audit opinion was qualified','It was not filed with the FCA'],
+    a:1, ex:'Slide 13 in action: fully compliant, fully audited -- yet material supply chain risks were not disclosed.' },
+  { q:'Which source type ranks HIGHEST for credibility?',
+    opts:['CEO investor day speech','Management commentary','Forecasts and projections','Independently audited financial statements'],
+    a:3, ex:'Slide 12 credibility ladder: Audited statements at the top -- though even these are not a guarantee.' },
+  { q:'A 300-page report buries all risks in footnote 62 and uses complex jargon throughout. This is which red flag?',
+    opts:['Missing Information','Internal Inconsistencies','Excessive Complexity','Unrealistic Projections'],
+    a:2, ex:'Excessive Complexity. Can be deliberate -- designed to make it harder for analysts to identify problems.' },
+  { q:'Patisserie Valerie had audited accounts showing profits while £94m was missing. Who was arrested?',
+    opts:['The CEO','The CFO','The external auditor','The board chairman'],
+    a:1, ex:'CFO Chris Wild was arrested. The fraud was completely hidden through falsified accounts.' },
+  { q:'An analyst report recommends buying a stock. The analyst\'s bank holds £2m of shares in that company. Which SMCCT concern?',
+    opts:['T -- data may be outdated','C -- inconsistency with prior reports','S -- incentive conflict at source','M -- flawed calculation methods'],
+    a:2, ex:'S = Source. The analyst\'s financial interest compromises independence. Always ask who benefits.' },
+  { q:'The SMCCT letter C for Completeness asks...',
+    opts:['Does this data match prior years?','What is missing? What is buried in the footnotes?','How was this figure calculated?','Is this data recent enough?'],
+    a:1, ex:'C = Completeness. Read all disclosures, contingencies and related party transactions.' },
+  { q:'Which statement about credibility indicators is TRUE? (Slide 11)',
+    opts:['A Big Four audit makes data 100% credible','FCA filing eliminates all credibility risk','All indicators reduce risk but none eliminate it','Consistent policies mean data is always accurate'],
+    a:2, ex:'Slide 11: All credibility indicators reduce risk. None of them eliminate it. Credibility is a spectrum.' },
+  { q:'TechStartup projects £300k revenue based on "expected contracts -- none signed yet." This is...',
+    opts:['A reasonable forward-looking estimate','An unrealistic projection with no evidence base','An internal inconsistency','A timeliness concern'],
+    a:1, ex:'Unrealistic Projections red flag. No signed contracts = no evidence base for the £300k figure.' }
+];
+
+var hsList, hsIdx, hsScore, hsStreak, hsBestStreak, hsMultiplier;
+
+function startHS() {
+  hsList = shuffle(HS_QS).slice(0, 15);
+  hsIdx = 0; hsScore = 0; hsStreak = 0; hsMultiplier = 1;
+  if (hsBestStreak === undefined) hsBestStreak = 0;
+  document.getElementById('hs-result').classList.remove('on');
+  document.getElementById('hs-game').style.display = 'block';
+  updateHSFlames(); renderHSQ();
+}
+
+function renderHSQ() {
+  if (hsIdx >= hsList.length) { showHSResult(); return; }
+  var q = hsList[hsIdx], i, btn;
+  document.getElementById('hs-prog').style.width = (hsIdx / hsList.length * 100) + '%';
+  document.getElementById('hs-qn').textContent = hsIdx + 1;
+  document.getElementById('hs-sc').textContent = hsScore;
+  document.getElementById('hs-q').textContent = q.q;
+  document.getElementById('hs-fb').className = 'fb';
+  document.getElementById('hs-nxt').className = 'nxt-btn';
+  var opts = document.getElementById('hs-opts');
+  opts.innerHTML = '';
+  for (i = 0; i < q.opts.length; i++) {
+    btn = document.createElement('button');
+    btn.className = 'hs-opt';
+    btn.textContent = q.opts[i];
+    (function(idx) { btn.addEventListener('click', function() { answerHS(idx); }); })(i);
+    opts.appendChild(btn);
+  }
+}
+
+function answerHS(i) {
+  var q = hsList[hsIdx];
+  var btns = document.querySelectorAll('.hs-opt'), j, fb, pts;
+  for (j = 0; j < btns.length; j++) btns[j].disabled = true;
+  fb = document.getElementById('hs-fb');
+  if (i === q.a) {
+    pts = 10 * hsMultiplier;
+    hsScore += pts; hsStreak++;
+    if (hsStreak > hsBestStreak) hsBestStreak = hsStreak;
+    hsMultiplier = Math.min(5, 1 + Math.floor(hsStreak / 2));
+    btns[i].classList.add('correct');
+    fb.textContent = '+' + pts + ' pts' + (hsMultiplier > 1 ? ' (x' + hsMultiplier + ' multiplier!)' : '') + ' -- ' + q.ex;
+    fb.className = 'fb on ok';
+  } else {
+    btns[i].classList.add('incorrect');
+    btns[q.a].classList.add('correct');
+    var lostMulti = hsMultiplier > 1;
+    hsStreak = 0; hsMultiplier = 1;
+    fb.textContent = (lostMulti ? 'Streak broken! Multiplier reset. ' : 'Wrong. ') + 'Correct: ' + q.opts[q.a] + '. ' + q.ex;
+    fb.className = 'fb on bad';
+    // Shake the multiplier
+    var mv = document.getElementById('hs-multi');
+    mv.classList.add('hs-shake');
+    setTimeout(function() { mv.classList.remove('hs-shake'); }, 450);
+  }
+  updateHSFlames();
+  document.getElementById('hs-sc').textContent = hsScore;
+  document.getElementById('hs-best').textContent = hsBestStreak;
+  document.getElementById('hs-nxt').className = 'nxt-btn on';
+}
+
+function updateHSFlames() {
+  var multi = document.getElementById('hs-multi');
+  multi.textContent = 'x' + hsMultiplier;
+  multi.style.color = hsMultiplier >= 5 ? '#ff4400' : hsMultiplier >= 4 ? '#ff6600' : hsMultiplier >= 3 ? '#ff8800' : hsMultiplier >= 2 ? '#ffaa00' : 'var(--gold)';
+  for (var f = 1; f <= 5; f++) {
+    var el = document.getElementById('hs-f' + f);
+    if (hsStreak >= (f * 2 - 1)) { el.classList.add('lit'); } else { el.classList.remove('lit'); }
+  }
+}
+
+function nextHS() { hsIdx++; renderHSQ(); }
+
+function showHSResult() {
+  GS.match = hsScore; refreshScores();
+  document.getElementById('hs-game').style.display = 'none';
+  document.getElementById('hs-result').classList.add('on');
+  var pct = Math.round(hsScore / (15 * 10 * 5) * 100); // theoretical max with full x5
+  document.getElementById('hsov-t').textContent =
+    hsScore >= 400 ? 'On Fire! Maximum Multiplier mastered!' :
+    hsScore >= 250 ? 'Hot Streak! Excellent knowledge!' :
+    hsScore >= 150 ? 'Warming up -- keep going!' : 'Cold start -- review and retry!';
+  document.getElementById('hsov-n').textContent = hsScore + ' pts';
+  document.getElementById('hsov-s').textContent =
+    'Best streak: ' + hsBestStreak + ' in a row. ' +
+    (hsBestStreak >= 6 ? 'You hit x' + Math.min(5, 1 + Math.floor(hsBestStreak/2)) + ' multiplier -- outstanding.' :
+     hsBestStreak >= 3 ? 'You reached x' + Math.min(5, 1 + Math.floor(hsBestStreak/2)) + ' multiplier. Can you push higher?' :
+     'Build your streak by reviewing Slides 10-13 and the SMCCT framework.');
+}
+
+// ================================================================
+//  GAME 3: CARD SWIPE  (pool: 24 cards, 10 per game)
+// ================================================================
+var ALL_CARDS = [
+  // core credibility/flag
+  { txt:'Revenue figures reconcile exactly with the audited cash flow statement', cat:'credible' },
+  { txt:'All operating expenses grouped as "Miscellaneous" -- no breakdown provided', cat:'flag' },
+  { txt:'Independently audited and filed under FCA regulatory requirements', cat:'credible' },
+  { txt:'Revenue projected to grow 500% -- no assumptions or evidence given', cat:'flag' },
+  { txt:'Accounting assumptions clearly stated and explained in the financial notes', cat:'credible' },
+  { txt:'Report includes no auditor signature or independent audit opinion', cat:'flag' },
+  { txt:'Consistent accounting policies maintained and disclosed for 5 consecutive years', cat:'credible' },
+  { txt:'CEO LinkedIn post: "This will be our biggest quarter ever -- watch this space!"', cat:'flag' },
+  { txt:'Projections based on contracts described as "expected" -- none have been signed', cat:'flag' },
+  { txt:'Regulatory filing with independent audit opinion and full risk disclosure', cat:'credible' },
+  { txt:'Management commentary written by CEO whose bonus depends on this year\'s share price', cat:'flag' },
+  { txt:'Annual report filed with the SEC following GAAP standards, unqualified opinion', cat:'credible' },
+  { txt:'A 2018 market research report used to support a 2026 major acquisition decision', cat:'flag' },
+  { txt:'Revenue figures confirmed by independent bank statement reconciliation', cat:'credible' },
+  // slides 10-13 specific
+  { txt:'A 300-page report where all risk factors are buried deep in footnote 47', cat:'flag' },
+  { txt:'Analyst report from a firm holding significant shares in the company being rated', cat:'flag' },
+  { txt:'FCA-regulated firm statutory accounts with unqualified Big Four audit opinion', cat:'credible' },
+  { txt:'Forecast projections assuming "market conditions will significantly improve" -- no basis given', cat:'flag' },
+  { txt:'Independent directors confirm no undisclosed related party transactions exist', cat:'credible' },
+  { txt:'Company changes its revenue recognition policy for the third year running -- no explanation given', cat:'flag' },
+  { txt:'Five years of stable financial ratios disclosed and consistent with industry benchmarks', cat:'credible' },
+  { txt:'CEO blog post titled: "Why we are going to dominate the market in 2026"', cat:'flag' },
+  { txt:'Wirecard: EY audit clean for 10 years. Accounts filed with German regulators. Unqualified opinion.', cat:'flag' },
+  { txt:'Report clearly states all assumptions behind projections, with sensitivities shown', cat:'credible' }
+];
+var cpList, cpIdx, cpScore, cpDrag = null;
+function startCards() {
+  cpList = shuffle(ALL_CARDS).slice(0, 10);
+  cpIdx = 0; cpScore = 0;
+  document.getElementById('cp-res').classList.remove('on');
+  document.getElementById('cbtns').style.display = 'flex';
+  updCardUI(); renderCard();
+}
+function updCardUI() {
+  document.getElementById('cp-n').textContent = Math.min(cpIdx + 1, cpList.length);
+  document.getElementById('cp-sc').textContent = cpScore;
+  document.getElementById('cp-fill').style.width = (cpIdx / cpList.length * 100) + '%';
+}
+function renderCard() {
+  var arena = document.getElementById('arena');
+  var old = arena.querySelector('.card');
+  if (old) old.remove();
+  if (cpIdx >= cpList.length) { showCardResult(); return; }
+  var data = cpList[cpIdx];
+  var card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = '<div class="cnum">' + (cpIdx+1) + '</div><div class="ctxt">' + data.txt + '</div>';
+  card.addEventListener('touchstart', function(e){ e.preventDefault(); var t=e.touches[0]; cpDrag={startX:t.clientX,startY:t.clientY}; card.style.transition='none'; }, {passive:false});
+  card.addEventListener('touchmove', function(e){ e.preventDefault(); if(!cpDrag)return; var dx=e.touches[0].clientX-cpDrag.startX,dy=(e.touches[0].clientY-cpDrag.startY)*.2; card.style.transform='translate('+dx+'px,'+dy+'px) rotate('+(dx*.07)+'deg)'; setZones(dx); }, {passive:false});
+  card.addEventListener('touchend', function(e){ e.preventDefault(); if(!cpDrag)return; var dx=e.changedTouches[0].clientX-cpDrag.startX; cpDrag=null; if(Math.abs(dx)>60){swipeCard(dx<0?'left':'right');}else{card.style.transition='transform .3s';card.style.transform='';setZones(0);} }, {passive:false});
+  card.addEventListener('mousedown', function(e){
+    cpDrag={startX:e.clientX,startY:e.clientY}; card.style.transition='none';
+    var onMove=function(ev){if(!cpDrag)return;var dx=ev.clientX-cpDrag.startX;card.style.transform='translate('+dx+'px,'+((ev.clientY-cpDrag.startY)*.2)+'px) rotate('+(dx*.07)+'deg)';setZones(dx);};
+    var onUp=function(ev){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);if(!cpDrag)return;var dx=ev.clientX-cpDrag.startX;cpDrag=null;if(Math.abs(dx)>60){swipeCard(dx<0?'left':'right');}else{card.style.transition='transform .3s';card.style.transform='';setZones(0);}};
+    document.addEventListener('mousemove',onMove); document.addEventListener('mouseup',onUp);
+  });
+  card.style.opacity='0'; card.style.transform='scale(.88) translateY(14px)'; card.style.transition='transform .3s, opacity .3s';
+  arena.appendChild(card);
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ card.style.transform=''; card.style.opacity='1'; }); });
+  setZones(0);
+}
+function setZones(dx){ document.getElementById('zone-l').classList.toggle('lit',dx<-28); document.getElementById('zone-r').classList.toggle('lit',dx>28); }
+function swipeCard(dir) {
+  if (cpIdx >= cpList.length) return;
+  var data = cpList[cpIdx];
+  var correct = (dir==='left'?'credible':'flag') === data.cat;
+  if (correct) cpScore++;
+  var card = document.querySelector('.card');
+  if (card) { card.style.transition='transform .4s, opacity .4s'; card.style.transform=dir==='left'?'translateX(-140%) rotate(-22deg)':'translateX(140%) rotate(22deg)'; card.style.opacity='0'; }
+  setZones(0);
+  showToast((correct?'Correct! ':'Not quite. ')+'That is '+(data.cat==='credible'?'a Credible Sign':'a Red Flag'), correct?'ok':'bad');
+  cpIdx++; updCardUI();
+  setTimeout(renderCard, 480);
+}
+function showCardResult() {
+  GS.cards = cpScore; refreshScores();
+  var pct = Math.round(cpScore / 10 * 100);
+  document.getElementById('cbtns').style.display='none';
+  document.getElementById('cp-res').classList.add('on');
+  document.getElementById('cp-t').textContent = pct>=80?'Sharp Analyst!':pct>=60?'Good Eye!':'Keep Practicing!';
+  document.getElementById('cp-n2').textContent = cpScore + '/10';
+  document.getElementById('cp-s').textContent = pct>=80?'You spot red flags at a glance.':pct>=60?'Good instincts. Review the ones you missed.':'Review red flag categories and the source types from Slide 12.';
+}
+
+// ================================================================
+//  GAME 4: CASE FILES  (pool: 24 questions, 8 per game)
+// ================================================================
+var CASE_QS = [
+  { case:'WIRECARD 2020', cls:'case-w',
+    q:'Wirecard was audited by EY for over a decade. What does this MOST powerfully demonstrate?',
+    opts:['Big Four firms are unreliable','Even a decade of Big Four audit cannot guarantee accuracy','German accounting standards are flawed','Investors should avoid payment companies'],
+    a:1, ex:'Credibility is a matter of degree. €1.9bn of fabricated cash went undetected for years.' },
+  { case:'WIRECARD 2020', cls:'case-w',
+    q:'Where was Wirecard\'s €1.9bn in supposed cash said to be held?',
+    opts:['Swiss private banks','Cayman Islands funds','Philippine bank accounts','German government bonds'],
+    a:2, ex:'The Philippine bank accounts were fabricated. No such cash ever existed anywhere.' },
+  { case:'CARILLION 2018', cls:'case-c',
+    q:'Carillion reported profits for years while hiding £7bn in debts. This is which SMCCT failure?',
+    opts:['Source -- wrong auditor chosen','Timeliness -- reports too old','Completeness -- material liabilities concealed','Methods -- wrong accounting standard used'],
+    a:2, ex:'C = Completeness. Carillion hid massive liabilities. External analysts never saw the full picture.' },
+  { case:'CARILLION 2018', cls:'case-c',
+    q:'Carillion\'s board knew about the £7bn problems months before the public collapse. This is an example of...',
+    opts:['Optimism Bias','Timeliness failure','Information Asymmetry','Regulatory failure'],
+    a:2, ex:'Slide 10: Information Asymmetry. Management controlled what investors could see until it was too late.' },
+  { case:'PATISSERIE VALERIE 2019', cls:'case-p',
+    q:'Patisserie Valerie\'s accounts showed profits while £94m was missing. Who was arrested?',
+    opts:['The CEO','The CFO','The external auditor','The chairman'],
+    a:1, ex:'CFO Chris Wild was arrested. The fraud was completely hidden through falsified accounts.' },
+  { case:'BOOHOO 2020', cls:'case-b',
+    q:'Boohoo\'s 2020 annual report was legally compliant and audited. Weeks later what was exposed?',
+    opts:['Revenue had been overstated by 40%','Workers at Leicester suppliers paid as little as £3.50/hour in unsafe conditions','The CEO had resigned without disclosure','The company had not paid corporation tax'],
+    a:1, ex:'The Leicester factory scandal. Share price collapsed. This is Slide 13 in action: compliance is not enough.' },
+  { case:'BOOHOO 2020', cls:'case-b',
+    q:'Boohoo\'s case is the best example of which core Topic 9 principle?',
+    opts:['Relevance is more important than credibility','FCA oversight prevents investor losses','Legal compliance does not equal analytical usefulness','Big Four firms always detect supply chain failures'],
+    a:2, ex:'Slide 13: The report was legal, audited and filed -- yet it failed to disclose a material risk.' },
+  { case:'BHS 2016', cls:'case-bhs',
+    q:'BHS\'s 2015 accounts credibly disclosed a £1.3bn pension deficit. For a 2016 survival investor this data was...',
+    opts:['Both credible and highly relevant','Credible but of limited relevance for the survival decision','Highly relevant but not credible','Neither credible nor relevant'],
+    a:1, ex:'Credible (audited) but limited relevance -- investors needed 2016 cash flow survival forecasts.' },
+  { case:'TECHSTARTUP LTD', cls:'case-g',
+    q:'TechStartup has no audit, 95% founder ownership, and "expected" contracts. Most serious red flag?',
+    opts:['The 400% growth claim','No independent audit opinion','The 95% founder share ownership','Using the word "expected"'],
+    a:1, ex:'No audit = no independent verification of any figure. Every number in the report is unverified.' },
+  { case:'TECHSTARTUP LTD', cls:'case-g',
+    q:'TechStartup says no customers named "for confidentiality reasons." Why suspicious?',
+    opts:['All companies must publicly name customers','It may indicate very few or no customers exist','Confidentiality agreements violate FCA rules','It breaches GDPR'],
+    a:1, ex:'Confidentiality can be used to hide an empty order book. This is a Missing Information red flag.' },
+  // Slides 10-13 specific cases
+  { case:'SLIDE 10: CHALLENGES', cls:'case-g',
+    q:'A company\'s 250-page report places all key risk disclosures deep inside footnote 62. This is which Slide 10 challenge?',
+    opts:['Information Asymmetry','Optimism Bias','Complexity and Opacity','Time Lag'],
+    a:2, ex:'Slide 10: Complexity and Opacity. Reports 100+ pages with risk buried in footnotes make analysis very difficult.' },
+  { case:'SLIDE 10: CHALLENGES', cls:'case-g',
+    q:'A CEO\'s forecast projects 40% annual growth for 5 years to justify a £500m funding round. This reflects which challenge?',
+    opts:['Time Lag','Complexity and Opacity','Information Asymmetry','Optimism Bias and Incentives'],
+    a:3, ex:'Slide 10: Optimism Bias -- bonuses, share prices and financing create incentives for unrealistically positive projections.' },
+  { case:'SLIDE 10: CHALLENGES', cls:'case-g',
+    q:'An investor reads Carillion\'s 2017 annual report in January 2018. Carillion collapses the same month. What challenge does this demonstrate?',
+    opts:['Complexity and Opacity','Time Lag','Optimism Bias','Over-reliance on Audit'],
+    a:1, ex:'Slide 10: Time Lag. Reports are backward-looking. By the time you read them, the position may have changed completely.' },
+  { case:'SLIDE 11: INDICATORS', cls:'case-g',
+    q:'An FCA filing signals regulatory compliance. According to Slide 11, what is its key LIMITATION?',
+    opts:['FCA filings are not publicly available','Compliance does not equal quality or credibility','FCA oversight only applies to large companies','FCA filings are not audited'],
+    a:1, ex:'Slide 11: Regulatory oversight reduces risk but compliance does not equal quality. Boohoo was FCA-regulated.' },
+  { case:'SLIDE 11: INDICATORS', cls:'case-g',
+    q:'According to Slide 11, "Credibility is always a matter of DEGREE." What does this mean for analysts?',
+    opts:['Some companies are 100% credible','You can trust Big Four audits completely','No source is fully guaranteed -- always evaluate with scepticism','Only FCA-regulated data is worth analysing'],
+    a:2, ex:'Slide 11: All credibility indicators reduce risk -- none eliminate it. Wirecard had a Big Four audit and FCA-equivalent oversight.' },
+  { case:'SLIDE 12: SOURCES', cls:'case-g',
+    q:'According to Slide 12, what is the main ADVANTAGE of Management Commentary?',
+    opts:['It is independently verified','It is legally required by FCA','It is timely -- more current than audited statements','It is free from incentive bias'],
+    a:2, ex:'Slide 12: Management Commentary is timely (pro) but incentive-driven and strategically framed (cons).' },
+  { case:'SLIDE 12: SOURCES', cls:'case-g',
+    q:'According to Slide 12, Forecasts and Projections have which ADVANTAGE?',
+    opts:['Higher credibility than audited statements','They are independently verified','They are relevant -- forward-looking for decisions','They are free from optimism bias'],
+    a:2, ex:'Slide 12: Forecasts are relevant (pro) but highly uncertain and subject to optimism bias (cons).' },
+  { case:'SLIDE 12: SOURCES', cls:'case-g',
+    q:'"Always ask: WHY does this data exist?" Applying this to an audited annual report vs a CEO blog -- what\'s the difference?',
+    opts:['No difference -- both are equally credible','Annual report = legal requirement; CEO blog = sell the story','CEO blog = more timely and therefore more credible','Annual reports are opinions; CEO blogs are facts'],
+    a:1, ex:'Slide 12: The purpose shapes credibility. Legal requirements create accountability. Selling the story creates incentive bias.' },
+  { case:'SLIDE 13: COMPLIANCE', cls:'case-g',
+    q:'According to Slide 13, which of these is a quality of "Analytical Usefulness" (NOT just Legal Compliance)?',
+    opts:['Meets minimum accounting standards','Follows accounting rules','Passes external audit','Reflects economic reality and supports decisions'],
+    a:3, ex:'Slide 13: Legal compliance = minimum standards, audit, legally defensible. Analytical usefulness = reflects reality, supports decisions, builds trust.' },
+  { case:'GENERAL PRINCIPLE', cls:'case-g',
+    q:'A 300-page report buries key risks in footnotes, uses complex jargon, and creates opaque holding structures. Which red flag?',
+    opts:['Missing Information','Internal Inconsistencies','Unrealistic Projections','Excessive Complexity'],
+    a:3, ex:'Excessive Complexity can be deliberate -- designed to obscure material risks and make analysis harder.' },
+  { case:'GENERAL PRINCIPLE', cls:'case-g',
+    q:'An analyst recommends a stock. Their bank holds £2m of shares in that company. Which SMCCT concern?',
+    opts:['T -- the report may be outdated','C -- inconsistency with prior advice','S -- incentive conflict at source','M -- flawed calculation methods'],
+    a:2, ex:'S = Source. The analyst\'s incentives compromise independence. Analyst Reports conflict of interest (Slide 12).' },
+  { case:'GENERAL PRINCIPLE', cls:'case-g',
+    q:'A company uses "approximately", "expected to" and "should improve" throughout. Which red flag?',
+    opts:['Internal Inconsistencies','Missing Information / Vague Language','Excessive Complexity','Unrealistic Projections'],
+    a:1, ex:'Vague language = Missing Information red flag. Precise, accountable language is a credibility sign.' },
+  { case:'GENERAL PRINCIPLE', cls:'case-g',
+    q:'Which of these would make you MOST confident in a company\'s financial data?',
+    opts:['Enthusiastic CEO investor letter','Revenue growth of 200% last year','Consistent disclosed accounting policies for 5 years','A 250-page comprehensive annual report'],
+    a:2, ex:'C = Consistency. Stable, disclosed policies over time are a strong positive credibility indicator (Slide 11).' },
+  { case:'GENERAL PRINCIPLE', cls:'case-g',
+    q:'Under SMCCT, which question should you ask FIRST?',
+    opts:['T: When was this published?','S: Who prepared this and what are their incentives?','C: Does this match last year?','M: How were the figures calculated?'],
+    a:1, ex:'Source is the foundation. Understanding who prepared the data and why shapes everything else.' }
+];
+var cfList, cfIdx, cfScore;
+function startCF() {
+  cfList = shuffle(CASE_QS).slice(0, 8);
+  cfIdx = 0; cfScore = 0;
+  document.getElementById('cf-res').classList.remove('on');
+  document.getElementById('cf-game').style.display = 'block';
+  renderCF();
+}
+function renderCF() {
+  if (cfIdx >= cfList.length) { showCFResult(); return; }
+  var q = cfList[cfIdx], i, btn;
+  document.getElementById('cf-prog').style.width = (cfIdx/cfList.length*100)+'%';
+  document.getElementById('cf-num').textContent = cfIdx+1;
+  document.getElementById('cf-sc').textContent = cfScore;
+  var badge = document.getElementById('cf-badge');
+  badge.textContent = q.case; badge.className = 'case-badge ' + q.cls;
+  document.getElementById('cf-q').textContent = q.q;
+  var opts = document.getElementById('cf-opts');
+  opts.innerHTML = '';
+  document.getElementById('cf-fb').className = 'fb';
+  document.getElementById('cf-nxt').className = 'nxt-btn';
+  for (i = 0; i < q.opts.length; i++) {
+    btn = document.createElement('button');
+    btn.className = 'cf-opt';
+    btn.textContent = q.opts[i];
+    (function(idx){ btn.addEventListener('click', function(){ answerCF(idx); }); })(i);
+    opts.appendChild(btn);
+  }
+}
+function answerCF(i) {
+  var q = cfList[cfIdx], btns = document.querySelectorAll('.cf-opt'), j, fb;
+  for (j = 0; j < btns.length; j++) btns[j].disabled = true;
+  fb = document.getElementById('cf-fb');
+  if (i === q.a) {
+    btns[i].classList.add('correct'); cfScore += 10;
+    fb.textContent = 'Correct! ' + q.ex; fb.className = 'fb on ok';
+  } else {
+    btns[i].classList.add('incorrect'); btns[q.a].classList.add('correct');
+    fb.textContent = 'Not quite. ' + q.ex; fb.className = 'fb on bad';
+  }
+  document.getElementById('cf-sc').textContent = cfScore;
+  document.getElementById('cf-nxt').className = 'nxt-btn on';
+}
+function nextCF() { cfIdx++; renderCF(); }
+function showCFResult() {
+  GS.cfiles = cfScore; refreshScores();
+  document.getElementById('cf-game').style.display = 'none';
+  document.getElementById('cf-res').classList.add('on');
+  var pct = Math.round(cfScore/80*100);
+  document.getElementById('cf-rt').textContent = pct>=80?'Case Closed!':pct>=60?'Good Detective Work!':'Keep Investigating!';
+  document.getElementById('cf-rn').textContent = cfScore + '/80';
+  document.getElementById('cf-rs').textContent = pct>=80?'You know all the cases and principles from Slides 1-13.':pct>=60?'Solid knowledge. Review the slides for the cases you missed.':'Focus on Slides 10-13: challenges, indicators, source types, and compliance vs usefulness.';
+}
+
+// ================================================================
+//  GAME 5: SPEED ROUND  (pool: 36 T/F, all slides)
+// ================================================================
+var TF_QS = [
+  // Slides 1-9
+  { s:'Wirecard was audited by EY for over a decade before the fraud was exposed.', a:true, ex:'Correct. EY, not KPMG or Deloitte.' },
+  { s:'Carillion\'s collapse in 2018 resulted in approximately 43,000 job losses.', a:true, ex:'Correct. Overnight collapse in January 2018.' },
+  { s:'Patisserie Valerie had a £94 million accounting black hole.', a:true, ex:'Correct. £94m missing. CFO Chris Wild arrested.' },
+  { s:'An audited annual report guarantees that all figures are 100% accurate.', a:false, ex:'Audit = reasonable assurance, not certainty. Wirecard proves this.' },
+  { s:'Compliance with accounting standards always means data is credible.', a:false, ex:'Boohoo was fully compliant yet failed to disclose material risks.' },
+  { s:'SMCCT stands for Source, Methods, Consistency, Completeness, Timeliness.', a:true, ex:'Correct. These are the five credibility questions.' },
+  { s:'The T in SMCCT stands for Transparency.', a:false, ex:'T = Timeliness. How old is this data? Markets change fast.' },
+  { s:'A CEO social media post ranks higher than an FCA filing for credibility.', a:false, ex:'CEO social media = bottom of the ladder. FCA filings near the top.' },
+  { s:'Wirecard\'s missing €1.9bn was supposedly held in Philippine bank accounts.', a:true, ex:'Correct. The accounts were completely fabricated.' },
+  { s:'Data can be credible but not relevant.', a:true, ex:'Correct. An old but accurate report used for a current decision.' },
+  { s:'Data can be relevant but not credible.', a:true, ex:'Correct. An unverified forecast may be exactly what you need but unreliable.' },
+  { s:'BHS had a pension deficit of £1.3 billion shown in its 2015 accounts.', a:true, ex:'Correct. Credible data -- but investors needed 2016 survival forecasts.' },
+  { s:'TechStartup Ltd\'s total annual revenue was £50,000 despite a 400% increase.', a:true, ex:'Correct. £10k grew to £50k. Percentage misleads; absolute figure is tiny.' },
+  { s:'An unqualified audit opinion means the auditors found zero errors.', a:false, ex:'Unqualified = fair view. NOT that zero errors or fraud exist.' },
+  // Slide 10 - Challenges
+  { s:'Information Asymmetry means management and investors have equal access to financial information.', a:false, ex:'Slide 10: Information Asymmetry = management controls what you see.' },
+  { s:'Optimism Bias leads to forecasts that are systematically too positive.', a:true, ex:'Slide 10: Bonuses and share prices create incentives for positive strategic framing.' },
+  { s:'Time Lag means annual reports reflect current market conditions.', a:false, ex:'Slide 10: Reports are backward-looking. Conditions can change dramatically between filing and reading.' },
+  { s:'Complexity and Opacity can be used deliberately to hide material risks.', a:true, ex:'Slide 10: 100+ page reports can deliberately bury risks in footnotes.' },
+  { s:'Over-reliance on Audit is one of the five challenges listed in Slide 10.', a:true, ex:'Slide 10: The five challenges are Information Asymmetry, Optimism Bias, Complexity/Opacity, Over-reliance on Audit, Time Lag.' },
+  { s:'Carillion\'s board was unaware of the £7bn debt problems before the public collapse.', a:false, ex:'Slide 10: The board knew months before. Classic Information Asymmetry.' },
+  // Slide 11 - Indicators with limitations
+  { s:'Credibility is always a matter of degree, not binary yes or no.', a:true, ex:'Slide 11: This is the central principle of credibility assessment.' },
+  { s:'Credibility indicators such as FCA filings eliminate credibility risk entirely.', a:false, ex:'Slide 11: Indicators REDUCE risk -- they do NOT eliminate it.' },
+  { s:'According to Slide 11, consistency over time equals accuracy.', a:false, ex:'Slide 11: Consistency does not equal accuracy. A consistently wrong method is still wrong.' },
+  { s:'A Big Four audit is a credibility indicator but does not guarantee accuracy.', a:true, ex:'Slide 11: Reputable institutions reduce risk. But Wirecard was audited by EY.' },
+  // Slide 12 - Sources
+  { s:'Audited financial statements are backward-looking and judgment-based.', a:true, ex:'Slide 12: Higher credibility -- but backward-looking (history, not future) and judgment-based.' },
+  { s:'Management Commentary is more credible than audited financial statements.', a:false, ex:'Slide 12: Management commentary is timely but incentive-driven. Audited statements rank higher.' },
+  { s:'Forecasts and Projections are relevant but highly uncertain and subject to optimism bias.', a:true, ex:'Slide 12: Relevant = pro. Highly uncertain + optimism bias = cons.' },
+  { s:'Analyst reports are free from conflicts of interest.', a:false, ex:'Slide 12: Analyst reports have assumption dependence and conflict of interest risks.' },
+  { s:'"WHY does this data exist?" is a key question when assessing source credibility.', a:true, ex:'Slide 12: Audited statements = legal requirement. CEO blog = sell the story. Purpose reveals bias.' },
+  // Slide 13 - Legal vs useful
+  { s:'Financial information that is legally compliant always provides a complete and meaningful picture.', a:false, ex:'Slide 13: Legally compliant data can still fail to provide decision-useful information.' },
+  { s:'Analytical usefulness requires data to reflect economic reality and support decisions.', a:true, ex:'Slide 13: This is what separates mere compliance from genuinely useful financial information.' },
+  { s:'Boohoo\'s 2020 annual report was not filed with FCA regulatory requirements.', a:false, ex:'It WAS legally compliant and filed -- yet it failed to disclose supply chain labour violations.' },
+  // General
+  { s:'Related party transactions must always be disclosed in annual reports.', a:true, ex:'Failure to disclose related party transactions is a serious Completeness red flag.' },
+  { s:'Forecast reports rank higher than audited statements for credibility.', a:false, ex:'Slide 12: Audited statements are highest. Forecasts are relevant but lowest for credibility.' },
+  { s:'Good financial reporting requires that assumptions behind projections are clearly stated.', a:true, ex:'Projections without stated assumptions are a Missing Information red flag.' },
+  { s:'Data that is both credible AND relevant is what you need for sound financial decisions.', a:true, ex:'The core principle of Topic 9. You need both -- neither alone is sufficient.' }
+];
+var srList, srIdx, srScore, srDone, srInterval, srTime;
+function startSpeed() {
+  srList = shuffle(TF_QS);
+  srIdx = 0; srScore = 0; srDone = 0; srTime = 60;
+  document.getElementById('sr-res').classList.remove('on');
+  document.getElementById('sr-game').style.display = 'block';
+  document.getElementById('sr-tbtn').disabled = false;
+  document.getElementById('sr-fbtn').disabled = false;
+  document.getElementById('sr-fb').className = 'fb';
+  updateSrTimer(); renderSRQ();
+  clearInterval(srInterval);
+  srInterval = setInterval(function(){
+    srTime--; updateSrTimer();
+    if (srTime <= 0) { clearInterval(srInterval); srTime = 0; updateSrTimer(); showSRResult(); }
+  }, 1000);
+}
+function updateSrTimer() {
+  document.getElementById('sr-time').textContent = srTime;
+  document.getElementById('sr-tfill').style.width = (srTime/60*100)+'%';
+}
+function renderSRQ() {
+  if (srIdx >= srList.length) { clearInterval(srInterval); showSRResult(); return; }
+  document.getElementById('sr-stmt').textContent = srList[srIdx].s;
+  document.getElementById('sr-sc').textContent = srScore;
+  document.getElementById('sr-done').textContent = srDone;
+  document.getElementById('sr-fb').className = 'fb';
+  document.getElementById('sr-tbtn').disabled = false;
+  document.getElementById('sr-fbtn').disabled = false;
+}
+function answerTF(ans) {
+  if (srIdx >= srList.length || srTime <= 0) return;
+  var q = srList[srIdx];
+  var correct = ans === q.a;
+  if (correct) srScore++;
+  srDone++;
+  document.getElementById('sr-tbtn').disabled = true;
+  document.getElementById('sr-fbtn').disabled = true;
+  var fb = document.getElementById('sr-fb');
+  fb.textContent = (correct?'Correct! ':'Wrong! ') + q.ex;
+  fb.className = 'fb on ' + (correct?'ok':'bad');
+  srIdx++;
+  setTimeout(renderSRQ, 1300);
+}
+function showSRResult() {
+  clearInterval(srInterval);
+  GS.speed = { score: srScore, done: srDone }; refreshScores();
+  document.getElementById('sr-game').style.display = 'none';
+  document.getElementById('sr-res').classList.add('on');
+  var acc = srDone > 0 ? Math.round(srScore/srDone*100) : 0;
+  document.getElementById('sr-rt').textContent = acc>=90?'Lightning Analyst!':acc>=70?'Fast and Accurate!':acc>=50?'Good speed!':'Keep studying!';
+  document.getElementById('sr-rn').textContent = srScore + '/' + srDone + ' correct';
+  document.getElementById('sr-rs').textContent = acc>=70?'Excellent accuracy at speed -- you really know all 13 slides.':'Review the statements you got wrong -- all 36 come directly from your lecture slides.';
+}
+
+// ================================================================
+//  BOOT
+// ================================================================
+window.addEventListener('load', function() {
+  try { startBowling(); } catch(e) { console.log('Bowl err:', e.message); }
+  try { startHS();      } catch(e) { console.log('HS err:', e.message); }
+  try { startCards();   } catch(e) { console.log('Cards err:', e.message); }
+  try { startCF();      } catch(e) { console.log('CF err:', e.message); }
+  try { startSpeed();   } catch(e) { console.log('Speed err:', e.message); }
+});
+</script>
+
+</body>
+</html>
